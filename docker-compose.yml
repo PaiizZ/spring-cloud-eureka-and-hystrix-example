@@ -1,0 +1,40 @@
+version: '2.1'
+
+networks:
+  java_net:
+     driver: bridge
+
+services:
+  eureka-service:
+    image: paiizz/eureka-service:1.0
+    ports:
+      - 8070:8070
+    restart: always
+    networks:
+      - java_net
+
+  hello-server:
+    image: paiizz/hello-server:1.0
+    depends_on:
+      eureka-service:
+        condition: service_started
+    links: 
+        - eureka-service
+    ports:
+      - 8071:8071
+    restart: always
+    networks:
+      - java_net
+  
+  hello-client:
+    image: paiizz/hello-client:1.0
+    depends_on:
+      eureka-service:
+        condition: service_started
+    links: 
+        - eureka-service
+    ports:
+      - 8072:8072
+    restart: always
+    networks:
+      - java_net
